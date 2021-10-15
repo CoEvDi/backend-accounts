@@ -1,0 +1,9 @@
+aiofile
+asyncpg
+bcrypt
+fastapi
+httpx
+passlib[bcrypt]
+pyyaml
+SQLAlchemy
+uvicorn

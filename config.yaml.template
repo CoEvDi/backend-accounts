@@ -1,0 +1,23 @@
+domain: 
+
+update_interval: 
+
+database:
+    host: 
+    port: 
+    user: 
+    password: 
+    database: 
+
+security:
+    token_secret_key: 
+    token_name: 
+
+admin:
+    login: 
+    password: 
+
+backend_auth:
+    host: 
+    port: 
+    del_sessions_path: 

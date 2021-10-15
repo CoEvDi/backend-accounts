@@ -1,1 +1,1 @@
-# backend-accounts
+# Accounts Management Micro-service Backend
