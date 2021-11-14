@@ -19,7 +19,6 @@ class YamlConfigManager:
                 print(f'Failed to update config, see you next time \n{repr(e)}')
             await asyncio.sleep(self._update_interval)
 
-
     async def _init(self, config):
         async with async_open(self._config_file, 'r') as f:
             data = yaml.safe_load(await f.read())
@@ -30,7 +29,6 @@ class YamlConfigManager:
             admin = data['admin']
             config.ADMIN_LOGIN = admin['login']
             config.ADMIN_PASSWORD = admin['password']
-
 
     async def _update(self, config):
         async with async_open(self._config_file, 'r') as f:
@@ -46,13 +44,10 @@ class YamlConfigManager:
             backend_auth = data['backend_auth']
             config.BA_DEL_SESSIONS_LINK = f"http://{backend_auth['host']}:{backend_auth['port']}/{backend_auth['del_sessions_path']}"
 
-
     async def start(self, config):
         self._update_task = asyncio.ensure_future(self._update_loop(config))
         await self._init(config)
-        await self._update(config)
 
 
 cfg = SimpleNamespace()
-
 cfg.STARTUP_DB_ACTION = False

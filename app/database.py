@@ -5,9 +5,8 @@ from sqlalchemy import Table, Column, Integer, String, DateTime, MetaData
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 from datetime import datetime
 
-from .models import *
 from .config import cfg
-
+from .utils import hash_password
 
 _engine = create_async_engine(cfg.DB_CONNECTION_STRING)
 _metadata = MetaData()
@@ -44,4 +43,12 @@ async def recreate_tables():
 
         print('Creating tables - ', end='', flush=True)
         await conn.run_sync(_metadata.create_all)
+        print('OK')
+
+        print('Creating admin account - ', end='', flush=True)
+        query = accounts.insert().values(role='admin', login=cfg.ADMIN_LOGIN,
+                                         name=cfg.ADMIN_LOGIN,
+                                         password=hash_password(cfg.ADMIN_PASSWORD),
+                                         register_time=datetime.utcnow())
+        await conn.execute(query)
         print('OK')

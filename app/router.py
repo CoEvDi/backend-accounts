@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from . import schemas
 from . import logic
-from .butils import get_current_user
+from .utils import get_current_user
 
 
 router = APIRouter()
@@ -30,13 +30,13 @@ async def get_me(current_user = Depends(get_current_user)):
     return await logic.me(current_user)
 
 
-@router.get('/{login}')
+@router.get('/account/{login}')
 async def get_account(login: str):
-    return await logic.get_account(login)
+    return await logic.get_account_info(login)
 
 
 @router.get('/all')
-async def get_all_accounts(offset: Optional[int] = Query(None), limit: Optional[int] = Query(None), role: Optional[string] = Query(None)):
+async def get_all_accounts(offset: Optional[int] = Query(None), limit: Optional[int] = Query(None), role: Optional[str] = Query(None)):
     return await logic.get_all_accounts(offset, limit, role)
 
 

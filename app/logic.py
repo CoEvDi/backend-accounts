@@ -1,21 +1,15 @@
 import uuid
 import httpx
-from passlib.hash import bcrypt
 from fastapi import Request
 from datetime import datetime, timedelta
+from sqlalchemy.sql import select
+from sqlalchemy import desc
 
 from .database import accounts
 from .database import _engine
 from .config import cfg
 from .errors import HTTPabort
-
-
-def hash_password(password):
-    return bcrypt.hash(password)
-
-
-def verify_password(password, hashed_password):
-    return bcrypt.verify(password, hashed_password)
+from .utils import hash_password, verify_password
 
 
 async def register_account(login, password, name):
@@ -48,8 +42,8 @@ async def get_account_info(login):
         result = await conn.execute(query)
         account = result.first()
 
-        if account:
-            HTTPabort(409, 'No account with this login')
+        if not account:
+            HTTPabort(404, 'No account with this login')
 
         return {
             'login': account['login'],
@@ -72,15 +66,17 @@ async def get_all_accounts(offset, limit, role):
 
         result = await conn.execute(query)
 
-        accounts = []
-        for account in results:
-            accounts.append({
+        all_accounts = []
+        count = 0
+        for account in result:
+            count += 1
+            all_accounts.append({
                 'login': account['login'],
                 'name': account['name'],
                 'role': account['role'],
                 'register_time': account['register_time']
             })
-        return accounts
+        return {'count': count, 'accounts': all_accounts}
 
 
 async def change_password(current_user, old_password, new_password):
@@ -89,7 +85,7 @@ async def change_password(current_user, old_password, new_password):
         result = await conn.execute(query)
         account = result.first()
 
-        if not verify_password(old_password, account.password)
+        if not verify_password(old_password, account.password):
             HTTPabort(422, 'Incorrect password')
         if old_password == new_password:
             HTTPabort(409, 'Old and new passwords are equal')
@@ -108,9 +104,14 @@ async def change_password(current_user, old_password, new_password):
         await conn.execute(query)
 
 
-async def verify_account(current_user, account):
+async def verify_account(account):
     async with _engine.begin() as conn:
-        query = select(accounts).where(accounts.c.id == current_user.account_id) if account.account_id else select(accounts).where(accounts.c.id == current_user.login)
+        query = select(accounts)
+        if account.account_id:
+            query = query.where(accounts.c.id == account.account_id)
+        else:
+            query = query.where(accounts.c.login == account.login)
+
         result = await conn.execute(query)
         acc = result.first()
 
