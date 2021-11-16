@@ -98,7 +98,7 @@ async def change_password(current_user, old_password, new_password):
             answer = await ac.post(cfg.BA_DEL_SESSIONS_LINK, json=json)
 
             if answer.status_code != 200:
-                HTTPabort(answer.status_code, answer.json()['content'])
+                HTTPabort(answer.status_code, answer.json()['detail'])
 
         query = accounts.update().where(accounts.c.id == current_user.account_id).values(password=hash_password(new_password))
         await conn.execute(query)

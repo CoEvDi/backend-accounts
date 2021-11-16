@@ -27,17 +27,20 @@ async def register_user(user: schemas.RegisterUser):
 
 @router.get('/me')
 async def get_me(current_user = Depends(get_current_user)):
-    return await logic.me(current_user)
+    data = await logic.me(current_user)
+    return HTTPanswer(200, data)
 
 
 @router.get('/account/{login}')
 async def get_account(login: str):
-    return await logic.get_account_info(login)
+    data = await logic.get_account_info(login)
+    return HTTPanswer(200, data)
 
 
 @router.get('/all')
 async def get_all_accounts(offset: Optional[int] = Query(None), limit: Optional[int] = Query(None), role: Optional[str] = Query(None)):
-    return await logic.get_all_accounts(offset, limit, role)
+    data = await logic.get_all_accounts(offset, limit, role)
+    return HTTPanswer(200, data)
 
 
 @router.post('/change_password')
@@ -50,4 +53,5 @@ async def change_password(passwords: schemas.ChangePassword, current_user = Depe
 
 @router.post('/verify_account')
 async def verify_account(account: schemas.VerifyAccount):
-    return await logic.verify_account(account)
+    data = await logic.verify_account(account)
+    return HTTPanswer(200, data)
