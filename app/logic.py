@@ -85,6 +85,8 @@ async def change_password(current_user, old_password, new_password):
         result = await conn.execute(query)
         account = result.first()
 
+        if not account:
+            HTTPabort(404, 'Account not found')
         if not verify_password(old_password, account.password):
             HTTPabort(422, 'Incorrect password')
         if old_password == new_password:
@@ -95,7 +97,7 @@ async def change_password(current_user, old_password, new_password):
                 'account_id': current_user.account_id,
                 'session_id': current_user.session_id
             }
-            answer = await ac.post(cfg.BA_DEL_SESSIONS_LINK, json=json)
+            answer = await ac.post(f'{cfg.BA_DEL_SESSIONS_LINK}/other', json=json)
 
             if answer.status_code != 200:
                 HTTPabort(answer.status_code, answer.json()['detail'])

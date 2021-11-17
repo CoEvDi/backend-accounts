@@ -42,7 +42,7 @@ class YamlConfigManager:
             config.TOKEN_NAME = security['token_name']
 
             backend_auth = data['backend_auth']
-            config.BA_DEL_SESSIONS_LINK = f"http://{backend_auth['host']}:{backend_auth['port']}/{backend_auth['del_sessions_path']}"
+            config.BA_DEL_SESSIONS_LINK = f"http://{backend_auth['host']}:{backend_auth['port']}/{backend_auth['del_sessions_route']}"
 
     async def start(self, config):
         self._update_task = asyncio.ensure_future(self._update_loop(config))
