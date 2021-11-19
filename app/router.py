@@ -37,7 +37,7 @@ async def get_account(login: str):
     return HTTPanswer(200, data)
 
 
-@router.get('/all')
+@router.get('/accounts/all')
 async def get_all_accounts(offset: Optional[int] = Query(None), limit: Optional[int] = Query(None), role: Optional[str] = Query(None)):
     data = await logic.get_all_accounts(offset, limit, role)
     return HTTPanswer(200, data)

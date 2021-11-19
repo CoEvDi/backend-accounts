@@ -33,7 +33,7 @@ async def me(current_user):
         result = await conn.execute(query)
         account = result.first()
 
-        return current_user.jsonify_info(account['login'], account['name'], account['register_time'])
+        return current_user.jsonify_info(account['login'], account['name'], account['register_time'].isoformat())
 
 
 async def get_account_info(login):
@@ -49,7 +49,7 @@ async def get_account_info(login):
             'login': account['login'],
             'role': account['role'],
             'name': account['name'],
-            'register_time': account['register_time']
+            'register_time': account['register_time'].isoformat()
         }
 
 
@@ -74,7 +74,7 @@ async def get_all_accounts(offset, limit, role):
                 'login': account['login'],
                 'name': account['name'],
                 'role': account['role'],
-                'register_time': account['register_time']
+                'register_time': account['register_time'].isoformat()
             })
         return {'count': count, 'accounts': all_accounts}
 
